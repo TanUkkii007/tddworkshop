@@ -1,21 +1,21 @@
 'use strict';
 
+var _VText = function(text) {
+	this._text = text || '';
+};
+
 var VText = function(text) {
-    if (this instanceof VText === false) {
-        return new VText(text);
-    }
-    this.text = text;
+	return new _VText(text);
 };
 
-VText.prototype = {
-    render: function() {
-        //Todo escape & isolate
-        return this.text;
-    }
+_VText.prototype = {
+	render:function(){
+		return this._text;
+	}
 };
 
-VText.empty = function() {
-    return new VText('');
+VText.empty = function(){
+	return new VText('');
 };
 
 module.exports = VText;
