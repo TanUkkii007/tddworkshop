@@ -1,34 +1,53 @@
 'use strict';
 
-function EventEmitter() {
-    this._events = {};
-}
+var EventEmitter = function() {
+  this._events = {};
+};
 
-EventEmitter.prototype = {
-    on: function(event, callback) {
-        if (!this._events[event]) {
-            this._events[event] = [];
-        }
-        this._events[event].push(callback);
-        return this;
-    },
-    off: function(event, callback) {
-        if (!this._events[event]) {
-            this._events[event] = [];
-        }
-        var index = this._events[event].indexOf(callback);
-        if (index !== -1) {
-            this._events[event].splice(index, 1);
-        }
-        return this;
-    },
-    emit: function(event, payload) {
-        var events = this._events[event] || [];
-        events.forEach(function(callback) {
-            callback.call(this, payload);
-        }.bind(this));
-        return this;
-    }
+EventEmitter.prototype.on = function(name, callback) {
+  if (!this.isSomeCallbackRegisteredWithName(name)) {
+    this._events[name] = [];
+  }
+
+  this._events[name].push(callback);
+};
+
+EventEmitter.prototype.off = function(name, callback) {
+  if (!this.isSomeCallbackRegisteredWithName(name)) {
+    return null;
+  }
+
+  var isDeleted = false;
+  var callbacks = this._events[name];
+
+  this._events[name] = callbacks
+    .map(function(cb) {
+      if (cb === callback && !isDeleted) {
+        isDeleted = true;
+        return null;
+      }
+
+      return cb;
+    })
+    .filter(function(cb) {
+      return !!cb;
+    });
+
+  return true;
+};
+
+EventEmitter.prototype.emit = function(name, arg) {
+  if (!this.isSomeCallbackRegisteredWithName(name)) {
+    return null;
+  }
+
+  this._events[name].forEach(function(cb) {
+    cb.call(this, arg);
+  }, this);
+};
+
+EventEmitter.prototype.isSomeCallbackRegisteredWithName = function(name) {
+  return !!this._events[name];
 };
 
 module.exports = EventEmitter;
