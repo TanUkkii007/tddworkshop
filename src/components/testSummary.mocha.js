@@ -8,8 +8,6 @@ var VText = require('../vdom/vtext');
 var summaryUtil = require('../summaryUtil');
 
 describe('testSummary', function() {
-    var ul = createElement('ul');
-
     var data = [
         {title: 'test1', isPassed: true, tags: ['testA']},
         {title: 'test2', isPassed: true, tags: ['testA']},
@@ -24,6 +22,7 @@ describe('testSummary', function() {
     ];
 
     it('testSummary(data)はdataを集計してsummaryItemのリストとして表示する', function() {
+        var ul = createElement('ul');
         assert.deepEqual(testSummary(data), ul({}, [
             summaryItem('failures', summaryUtil.failedNumber(data)),
             summaryItem('passes', summaryUtil.passedNumber(data)),
